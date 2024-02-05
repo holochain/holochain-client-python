@@ -11,6 +11,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
+python = "^3.11"
 msgpack = "^1.0.7"
 
 [build-system]

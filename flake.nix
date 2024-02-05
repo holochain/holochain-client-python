@@ -28,6 +28,7 @@
                         python-pkgs.pip
                         python-pkgs.poetry-core
                     ]))
+                    pkgs.poetry
                 ];
             };
         };
