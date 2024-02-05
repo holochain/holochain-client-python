@@ -4,3 +4,21 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/holochain.svg?style=social&label=Follow)](https://twitter.com/holochain)
 
 # Holochain Client - Python
+
+### Set up a development environment
+
+The developer environment for this project relies on Holonix, which you can find out more about in the Holochain [getting started guide](https://developer.holochain.org/get-started/). Once you have Nix installed, you can create a new development environment by entering the following command into your shell at the root of this project:
+
+```bash
+nix develop
+```
+
+Then once the Nix shell has spawned
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install .
+```
+
+TODO: How to verify your development environment?
