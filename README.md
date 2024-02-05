@@ -13,12 +13,17 @@ The developer environment for this project relies on Holonix, which you can find
 nix develop
 ```
 
-Then once the Nix shell has spawned
+Then once the Nix shell has spawned, create a virtual environment:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install .
+```
+
+Then install dependencies using Poetry:
+
+```bash
+poetry install --no-root
 ```
 
 TODO: How to verify your development environment?

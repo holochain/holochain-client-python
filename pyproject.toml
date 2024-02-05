@@ -1,18 +1,25 @@
 [tool.poetry]
 name = "holochain-client"
+version = "0.1.0"
 description = "A Python client for the Holochain Conductor API"
 authors = [
     "ThetaSinner <ThetaSinner@users.noreply.github.com>",
 ]
-version = "0.1.0"
+readme = "README.md"
+license = "CAL 1.0"
+keywords = ["holochain", "conductor-api"]
+include = ["CHANGELOG.md"]
 
 packages = [
     { include = "holochain_client" }
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.8"
 msgpack = "^1.0.7"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.0.0"
 
 [build-system]
 requires = ["poetry-core"]
