@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from holochain_client.api.common.types import (
     AgentPubKey,
     CellId,
@@ -118,8 +118,6 @@ class CellInfoProvisioned:
     cell_id: CellId
     dna_modifiers: DnaModifiers
     name: str
-    type: str = "Provisioned"
-
 
 @dataclass
 class CellInfoCloned:
@@ -129,7 +127,6 @@ class CellInfoCloned:
     dna_modifiers: DnaModifiers
     name: str
     enabled: bool
-    type: str = "Cloned"
 
 
 @dataclass
@@ -137,7 +134,6 @@ class CellInfoStem:
     original_dna_hash: DnaHash
     dna_modifiers: DnaModifiers
     name: Optional[str]
-    type: str = "stem"
 
 
 @dataclass
@@ -157,12 +153,53 @@ class AppinfoStatusRunning:
     type: str = "Running"
 
 
+CellInfoKind = Enum("CellInfoKind", ["provisioned", "cloned", "stem"])
+
 @dataclass
 class AppInfo:
     installed_app_id: str
     cell_info: Dict[
-        RoleName, List[Union[CellInfoProvisioned, CellInfoCloned, CellInfoStem]]
+        RoleName, List[Dict[CellInfoKind, Union[CellInfoProvisioned, CellInfoCloned, CellInfoStem]]]
     ]
     status: Union[AppinfoStatusPaused, AppInfoStatusDisabled, AppinfoStatusRunning]
     agent_pub_key: AgentPubKey
     manifest: AppManifest
+
+@dataclass
+class CapAccessUnrestricted:
+    type: str = "Unrestricted"
+
+@dataclass
+class CapAccessTransferable:
+    secret: bytes
+    type: str = "Transferable"
+
+@dataclass
+class CapAccessAssigned:
+    secret: bytes
+    assignees: List[AgentPubKey]
+
+GrantedFunctionKind = Enum("GrantedFunctionKind", ["All", "Listed"])
+GrantedFunctions = Dict[GrantedFunctionKind, Union[None, List[str]]]
+
+CapAccessKind = Enum("CapAccessKind", ["Unrestricted", "Transferable", "Assigned"])
+
+@dataclass
+class ZomeCallCapGrant:
+    tag: str
+    access: Dict[CapAccessAssigned, Union[CapAccessUnrestricted, CapAccessTransferable, CapAccessAssigned]]
+    functions: GrantedFunctions
+
+@dataclass
+class GrantZomeCallCapability:
+    cell_id: CellId
+    cap_grant: ZomeCallCapGrant
+
+@dataclass
+class EnableApp:
+    installed_app_id: str
+
+@dataclass
+class AppEnabled:
+    app: AppInfo
+    errors: List[Tuple[CellId, str]]

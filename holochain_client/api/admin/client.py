@@ -3,9 +3,12 @@ import asyncio
 import websockets
 from holochain_client.api.admin.types import (
     AdminRequest,
+    AppEnabled,
     AppInfo,
     DumpNetworkStats,
+    EnableApp,
     GenerateAgentPubKey,
+    GrantZomeCallCapability,
     InstallApp,
     ListApps,
     WireMessageRequest,
@@ -35,6 +38,7 @@ class AdminClient:
     async def install_app(self, request: InstallApp) -> AppInfo:
         response = await self._exchange(request)
         assert response["type"] == "app_installed", f"response was: {response}"
+        print("Install app response was: ", response)
         return AppInfo(**response["data"])
 
     async def generate_agent_pub_key(
@@ -51,12 +55,22 @@ class AdminClient:
         assert response["type"] == "apps_listed", f"response was: {response}"
         return [AppInfo(**x) for x in response["data"]]
 
+    async def enable_app(self, request: EnableApp) -> AppEnabled:
+        response = await self._exchange(request)
+        assert response["type"] == "app_enabled", f"response was: {response}"
+        return AppEnabled(*response["data"])
+
     async def dump_network_stats(
         self, request: DumpNetworkStats = DumpNetworkStats()
     ) -> object:
         response = await self._exchange(request)
         assert response["type"] == "network_stats_dumped", f"response was: {response}"
         return json.loads(response["data"])
+
+    async def grant_zome_call_capability(self, grant_zome_call_capability: GrantZomeCallCapability):
+        print("Sending grant_zome_call_capability: ", grant_zome_call_capability)
+        response = await self._exchange(grant_zome_call_capability)
+        assert response["type"] == "zome_call_capability_granted", f"response was: {response}"
 
     async def close(self):
         await self.client.close()
