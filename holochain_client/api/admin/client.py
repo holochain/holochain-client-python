@@ -67,10 +67,14 @@ class AdminClient:
         assert response["type"] == "network_stats_dumped", f"response was: {response}"
         return json.loads(response["data"])
 
-    async def grant_zome_call_capability(self, grant_zome_call_capability: GrantZomeCallCapability):
+    async def grant_zome_call_capability(
+        self, grant_zome_call_capability: GrantZomeCallCapability
+    ):
         print("Sending grant_zome_call_capability: ", grant_zome_call_capability)
         response = await self._exchange(grant_zome_call_capability)
-        assert response["type"] == "zome_call_capability_granted", f"response was: {response}"
+        assert (
+            response["type"] == "zome_call_capability_granted"
+        ), f"response was: {response}"
 
     async def close(self):
         await self.client.close()

@@ -7,6 +7,7 @@ from holochain_client.api.admin.client import AdminClient
 from pathlib import Path
 from os import path
 
+
 class TestHarness:
     admin_client: AdminClient
     fixture_path: str
@@ -15,9 +16,13 @@ class TestHarness:
         (self._sandbox_process, admin_port) = _start_holochain()
         self.admin_client = await AdminClient.create(f"ws://localhost:{admin_port}")
 
-        fixture_path = (Path(__file__).parent / "../fixture/workdir/fixture.happ").resolve()
+        fixture_path = (
+            Path(__file__).parent / "../fixture/workdir/fixture.happ"
+        ).resolve()
         if not path.exists(fixture_path):
-            raise Exception("Fixture does not exist, please build it before running this test")
+            raise Exception(
+                "Fixture does not exist, please build it before running this test"
+            )
         self.fixture_path = str(fixture_path)
 
         return self

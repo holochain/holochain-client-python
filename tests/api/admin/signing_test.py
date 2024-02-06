@@ -1,12 +1,17 @@
-from holochain_client.api.admin.signing import authorize_signing_credentials, generate_signing_keypair
+from holochain_client.api.admin.signing import (
+    authorize_signing_credentials,
+    generate_signing_keypair,
+)
 import pytest
 from holochain_client.api.admin.types import EnableApp, InstallApp
 
 from tests.harness import TestHarness
 
+
 def test_generate_signing_keypair():
     signing_keypair = generate_signing_keypair()
     assert len(signing_keypair.identity) == 39
+
 
 @pytest.mark.asyncio
 async def test_authorize_signing_credentials():
@@ -22,9 +27,14 @@ async def test_authorize_signing_credentials():
         )
         print("response: ", response)
 
-        await harness.admin_client.enable_app(EnableApp(installed_app_id=response.installed_app_id))
+        await harness.admin_client.enable_app(
+            EnableApp(installed_app_id=response.installed_app_id)
+        )
 
-        await authorize_signing_credentials(harness.admin_client, response.cell_info["fixture"][0]["provisioned"]["cell_id"], None)
+        await authorize_signing_credentials(
+            harness.admin_client,
+            response.cell_info["fixture"][0]["provisioned"]["cell_id"],
+            None,
+        )
 
         assert response.installed_app_id == "test_app"
-

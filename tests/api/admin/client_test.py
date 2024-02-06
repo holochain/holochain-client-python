@@ -1,10 +1,6 @@
 import pytest
 from holochain_client.api.admin.client import AdminClient
 from holochain_client.api.admin.types import (
-    AppBundleSourceBundle,
-    AppManifest,
-    AppRoleDnaManifest,
-    AppRoleManifest,
     InstallApp,
 )
 from tests.harness import TestHarness
