@@ -19,7 +19,7 @@ async def test_create():
             InstallApp(
                 agent_key=agent_pub_key,
                 installed_app_id="test_app",
-                path="/home/thetasinner/source/holo/holochain-client-python/sample.happ", # TODO
+                path="/home/thetasinner/source/holo/holochain-client-python/sample.happ",  # TODO
             )
         )
         print("response: ", response)
@@ -36,7 +36,7 @@ async def test_list_apps():
             InstallApp(
                 agent_key=agent_pub_key,
                 installed_app_id="test_app",
-                path="/home/thetasinner/source/holo/holochain-client-python/sample.happ", # TODO
+                path="/home/thetasinner/source/holo/holochain-client-python/sample.happ",  # TODO
             )
         )
 

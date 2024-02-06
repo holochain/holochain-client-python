@@ -1,8 +1,15 @@
-
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
-from holochain_client.api.common.types import AgentPubKey, CellId, DnaHash, MembraneProof, NetworkSeed, RoleName
+from holochain_client.api.common.types import (
+    AgentPubKey,
+    CellId,
+    DnaHash,
+    MembraneProof,
+    NetworkSeed,
+    RoleName,
+)
+
 
 @dataclass
 class WireMessageRequest:
@@ -10,24 +17,29 @@ class WireMessageRequest:
     data: List[int]
     type: str = "request"
 
+
 @dataclass
 class AdminRequest:
     type: str
     data: Dict
+
 
 @dataclass
 class CellProvisioningCreate:
     deferred: bool
     strategy: str = "Create"
 
+
 @dataclass
 class CellProvisioningCloneOnly:
     strategy: str = "CloneOnly"
+
 
 @dataclass
 class Duration:
     secs: int
     nanos: int
+
 
 @dataclass
 class DnaModifiers:
@@ -35,6 +47,7 @@ class DnaModifiers:
     properties: Optional[Dict] = None
     origin_time: Optional[int] = None
     quantum_time: Optional[Duration] = None
+
 
 @dataclass
 class AppRoleDnaManifest:
@@ -48,7 +61,10 @@ class AppRoleDnaManifest:
 class AppRoleManifest:
     name: RoleName
     dna: AppRoleDnaManifest
-    provisioning: Optional[Union[CellProvisioningCreate, CellProvisioningCloneOnly]] = None
+    provisioning: Optional[Union[CellProvisioningCreate, CellProvisioningCloneOnly]] = (
+        None
+    )
+
 
 @dataclass
 class AppManifest:
@@ -57,10 +73,12 @@ class AppManifest:
     description: Optional[str]
     roles: List[AppRoleManifest]
 
+
 @dataclass
 class AppBundleSourceBundle:
     manifest: AppManifest
     resources: Dict[str, bytes]
+
 
 @dataclass
 class InstallApp:
@@ -79,15 +97,21 @@ class InstallApp:
 class GenerateAgentPubKey:
     pass
 
-AppStatusFilter = Enum("AppStatusFilter", ["Enabled", "Disabled", "Running", "Stopped", "Paused"])
+
+AppStatusFilter = Enum(
+    "AppStatusFilter", ["Enabled", "Disabled", "Running", "Stopped", "Paused"]
+)
+
 
 @dataclass
 class ListApps:
     status_filter: Optional[AppStatusFilter] = None
 
+
 @dataclass
 class DumpNetworkStats:
     pass
+
 
 @dataclass
 class CellInfoProvisioned:
@@ -95,6 +119,7 @@ class CellInfoProvisioned:
     dna_modifiers: DnaModifiers
     name: str
     type: str = "Provisioned"
+
 
 @dataclass
 class CellInfoCloned:
@@ -106,6 +131,7 @@ class CellInfoCloned:
     enabled: bool
     type: str = "Cloned"
 
+
 @dataclass
 class CellInfoStem:
     original_dna_hash: DnaHash
@@ -113,24 +139,30 @@ class CellInfoStem:
     name: Optional[str]
     type: str = "stem"
 
+
 @dataclass
 class AppinfoStatusPaused:
-    reason: Any # TODO
+    reason: Any  # TODO
     type: str = "Paused"
+
 
 @dataclass
 class AppInfoStatusDisabled:
-    reason: Any # TODO
+    reason: Any  # TODO
     type: str = "Disabled"
+
 
 @dataclass
 class AppinfoStatusRunning:
     type: str = "Running"
 
+
 @dataclass
 class AppInfo:
     installed_app_id: str
-    cell_info: Dict[RoleName, List[Union[CellInfoProvisioned, CellInfoCloned, CellInfoStem]]]
+    cell_info: Dict[
+        RoleName, List[Union[CellInfoProvisioned, CellInfoCloned, CellInfoStem]]
+    ]
     status: Union[AppinfoStatusPaused, AppInfoStatusDisabled, AppinfoStatusRunning]
     agent_pub_key: AgentPubKey
     manifest: AppManifest
