@@ -1,0 +1,19 @@
+[profile.dev]
+opt-level = "z"
+
+[profile.release]
+opt-level = "z"
+
+[workspace]
+members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*"]
+
+[workspace.dependencies]
+hdi = "=0.3.5"
+hdk = "=0.2.5"
+serde = "=1.0.166"
+
+[workspace.dependencies.fixture]
+path = "dnas/fixture/zomes/coordinator/fixture"
+
+[workspace.dependencies.fixture_integrity]
+path = "dnas/fixture/zomes/integrity/fixture"

@@ -1,0 +1,18 @@
+---
+manifest_version: "1"
+name: fixture
+description: ~
+roles:
+  - name: fixture
+    provisioning:
+      strategy: create
+      deferred: false
+    dna:
+      bundled: "../dnas/fixture/workdir/fixture.dna"
+      modifiers:
+        network_seed: ~
+        properties: ~
+        origin_time: ~
+        quantum_time: ~
+      installed_hash: ~
+      clone_limit: 0

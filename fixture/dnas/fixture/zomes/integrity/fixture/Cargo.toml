@@ -1,0 +1,13 @@
+[package]
+name = "fixture_integrity"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+name = "fixture_integrity"
+
+[dependencies]
+hdi = { workspace = true }
+
+serde = { workspace = true }

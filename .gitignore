@@ -1,6 +1,11 @@
 /.venv
 /.pytest_cache
 /**/__pycache__
+/fixture/target
+/fixture/node_modules
+/.cargo
 
 .hc
 .hc_*
+*.dna
+*.happ

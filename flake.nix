@@ -29,6 +29,7 @@
                         python-pkgs.poetry-core
                     ]))
                     pkgs.poetry
+                    pkgs.nodejs_20
                 ];
             };
         };
