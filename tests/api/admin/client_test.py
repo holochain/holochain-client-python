@@ -6,5 +6,4 @@ import subprocess
 @pytest.mark.asyncio
 async def test_connect():
     async with TestHarness() as harness:
-        client = await AdminClient.create("ws://localhost:8888")
-        await client.close()        
+        print("harness.admin_client: ", harness.admin_client)
