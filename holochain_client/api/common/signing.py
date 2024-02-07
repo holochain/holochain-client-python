@@ -56,7 +56,7 @@ def _add_to_creds_store(cell_id: CellId, creds: SigningCredentials):
     CREDS_STORE[base64.b64encode(bytes([*cell_id[0], *cell_id[1]]))] = creds
 
 
-def _get_from_creds_store(cell_id: CellId) -> Optional[SigningCredentials]:
+def get_from_creds_store(cell_id: CellId) -> Optional[SigningCredentials]:
     return CREDS_STORE.get(base64.b64encode(bytes([*cell_id[0], *cell_id[1]])))
 
 

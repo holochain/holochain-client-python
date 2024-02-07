@@ -7,14 +7,20 @@ from holochain_client.api.admin.client import AdminClient
 from pathlib import Path
 from os import path
 
+from holochain_client.api.app.client import AppClient
+
 
 class TestHarness:
     admin_client: AdminClient
+    app_client: AppClient
     fixture_path: str
 
     async def __aenter__(self):
         (self._sandbox_process, admin_port) = _start_holochain()
         self.admin_client = await AdminClient.create(f"ws://localhost:{admin_port}")
+
+        app_interface = await self.admin_client.attach_app_interface()
+        self.app_client = await AppClient.create(f"ws://localhost:{app_interface.port}")
 
         fixture_path = (
             Path(__file__).parent / "../fixture/workdir/fixture.happ"
@@ -29,9 +35,9 @@ class TestHarness:
 
     async def __aexit__(self, exc_type, exc, tb):
         del exc_type, exc, tb
+        await self.app_client.close()
         await self.admin_client.close()
         self._sandbox_process.send_signal(signal.SIGINT)
-
 
 def _start_holochain() -> Tuple[Popen, int]:
     ps = run(["hc", "sandbox", "clean"])

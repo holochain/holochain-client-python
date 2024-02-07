@@ -7,7 +7,7 @@ from tests.harness import TestHarness
 
 
 @pytest.mark.asyncio
-async def test_create():
+async def test_install_app():
     async with TestHarness() as harness:
         agent_pub_key = await harness.admin_client.generate_agent_pub_key()
 
@@ -15,10 +15,9 @@ async def test_create():
             InstallApp(
                 agent_key=agent_pub_key,
                 installed_app_id="test_app",
-                path="/home/thetasinner/source/holo/holochain-client-python/sample.happ",  # TODO
+                path=harness.fixture_path,
             )
         )
-        print("response: ", response)
 
         assert response.installed_app_id == "test_app"
 
@@ -32,7 +31,7 @@ async def test_list_apps():
             InstallApp(
                 agent_key=agent_pub_key,
                 installed_app_id="test_app",
-                path="/home/thetasinner/source/holo/holochain-client-python/sample.happ",  # TODO
+                path=harness.fixture_path,
             )
         )
 

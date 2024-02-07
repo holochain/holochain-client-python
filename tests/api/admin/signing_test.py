@@ -1,4 +1,4 @@
-from holochain_client.api.admin.signing import (
+from holochain_client.api.common.signing import (
     authorize_signing_credentials,
     generate_signing_keypair,
 )
