@@ -150,6 +150,56 @@ files = [
 test = ["pytest (>=6)"]
 
 [[package]]
+name = "holochain-serialization"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "holochain_serialization-0.1.0-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:ff1c4657262c4ba2824bf25719a3b542625cc6d0e9347fe54ce8edae845a94dc"},
+    {file = "holochain_serialization-0.1.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:ab655d683cb1faf912856e55cb8ecf8213e0d4bcac7731f7224a4677bf014e42"},
+    {file = "holochain_serialization-0.1.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a41bda8088dbea443e493bf36d6ebd44d74d4652a1c2776157eef4f2501d0aae"},
+    {file = "holochain_serialization-0.1.0-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:f29123eb4c496e587868241086da75ff952f3833ed9b37743f12af9303acb909"},
+    {file = "holochain_serialization-0.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:09280dad1425d4b188b07c2069b05a290b16d833bfd1f93449f26726e2f915b7"},
+    {file = "holochain_serialization-0.1.0-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:7051c45d47d034de1d2778b008ab26fb6bd06d341069574d258c8436ee71a853"},
+    {file = "holochain_serialization-0.1.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:c95237ed7f81f9c5bc168175844f31c21410601241dc0d69149e36c33fef2169"},
+    {file = "holochain_serialization-0.1.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:55ebb25c0a3486f8f1a74a918c1e0e08e60dd10b029a2fa41377720649194b3c"},
+    {file = "holochain_serialization-0.1.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:01d02527cd15fbc635f23bb624b3d08bfeaf98c94ab28dceaa8839640f94f94f"},
+    {file = "holochain_serialization-0.1.0-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:1eb3399357dd7013d14ae4af99ff9ae0c373c431116a9aa99383794dcc9aaad9"},
+    {file = "holochain_serialization-0.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6a6ef12e94c2088f16c79bf7687ad6a83cd00f232a01a2352a48e48d63da0685"},
+    {file = "holochain_serialization-0.1.0-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:03cc4a56da68c8284d995d5f9b14b04b9e0d2ded85c6190d98e59630cc3a8ab8"},
+    {file = "holochain_serialization-0.1.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:147ceb8c7ba0049bb0e8a484216b00ae2790c13b6db9e3184d1a3d2cdd8db3c2"},
+    {file = "holochain_serialization-0.1.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ade7c89f870caeb8a72fd023aa5a8e752b2d5ec3aab682da72b57cafee67d479"},
+    {file = "holochain_serialization-0.1.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e92e269aba49cdb59e5caf8e6fbb21daa1afa2db424c60d7d9c16c510dfaf52f"},
+    {file = "holochain_serialization-0.1.0-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:0eea229b56352ce561eabb48173d617ed4d352bf505ad836707cc8fc39efeb94"},
+    {file = "holochain_serialization-0.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3cd558c411e98816d44332d48690907ce71d6720c5a347d17cb9d2a8a571cacb"},
+    {file = "holochain_serialization-0.1.0-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:e67658baaf6f23904bfb2b304d996e49dc2c5ebf17b60a3ddd05851b8c68940e"},
+    {file = "holochain_serialization-0.1.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1109433de6bd7dd512c8ac0b08041e652bbf030b95b219a2e5c35864bf18396c"},
+    {file = "holochain_serialization-0.1.0-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:c8851a1a14a94b71615520f9a147257fee75221d7ad001168803b13a02c530db"},
+    {file = "holochain_serialization-0.1.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f7d4cb37a5a7e8f23d3fe9459a6a182b90310387d4265a45da14648e208c8d07"},
+    {file = "holochain_serialization-0.1.0-cp38-cp38-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:23496d8ebfdc73a0af083121e5f55ba7e1808b02f9013d1d4d3ad8f3b002acbd"},
+    {file = "holochain_serialization-0.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ce953b9f244f1d7a70bebd28f5a6f03857d4e4a35db601162b9ac159a14fa2be"},
+    {file = "holochain_serialization-0.1.0-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:3d986ceb21dc0d961b3bd57067fb07c65ec0de1cbb11b64d486e6a16398d9395"},
+    {file = "holochain_serialization-0.1.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8ea03ecf3952d3398313fa9977f0d29f4ecd82bef5da1e133713b4700013947d"},
+    {file = "holochain_serialization-0.1.0-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:f2e661521618b542e7f6b824f306799490475555f1de2db61618933d0f366eba"},
+    {file = "holochain_serialization-0.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:811a49ca47d1a747a66e91c58505276312d759502442a80d5d8fd5ad00336f99"},
+    {file = "holochain_serialization-0.1.0-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:93185120b0f11947cb304b8361876cc0f4d5d92973f042014bc2b93c556feea9"},
+    {file = "holochain_serialization-0.1.0-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f277d1b5e3b3756632d1e6633d2843b3c7f901f3d01c34bc2956d450d4a4c1e1"},
+    {file = "holochain_serialization-0.1.0-pp310-pypy310_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:57c9b8ef1f326d168ff525a4a3de6dfe9494f14940a057b451454f10a8b74f04"},
+    {file = "holochain_serialization-0.1.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2da21ba8cd495966670d33080b786d492b0883f6cb8c4ae6ee80f92ae870d716"},
+    {file = "holochain_serialization-0.1.0-pp310-pypy310_pp73-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:d91684fdd9c898a51ab4c0dc086ad2d88f9bfc1e6d496ae7aa02099e43599116"},
+    {file = "holochain_serialization-0.1.0-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fbcd9631ffe6a1c14df05cd5cd9d5cd5b9c9ddcfb9a160579638ba9aed2f185c"},
+    {file = "holochain_serialization-0.1.0-pp38-pypy38_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:601065a9c22595f8be9fe97b185c727bcecd895b4bece7b8c941e488b6b50245"},
+    {file = "holochain_serialization-0.1.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e43cc5a91bc54a1fefe8a952b2e67cf9af6ab955efda8aacd0013f94f05f6b98"},
+    {file = "holochain_serialization-0.1.0-pp38-pypy38_pp73-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:f9ccf004d5f5f18cfea77ceb75d602c9f6e4f9566e256bc610f58bac01e5567e"},
+    {file = "holochain_serialization-0.1.0-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c32e0318bbefe5efd578b9bff6f593f6f00aea933d10e5a49cdfde97efbfa825"},
+    {file = "holochain_serialization-0.1.0-pp39-pypy39_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:38e67a11fa7defaf2839466449718455f880417e70ea5eb2730b2c78afac24ec"},
+    {file = "holochain_serialization-0.1.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:25957708756705b4572d63935d06924db74ddc197a8b6dc85f8fa8de912ef429"},
+    {file = "holochain_serialization-0.1.0-pp39-pypy39_pp73-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:ccdd8d96e828a9e838557090ea2ded3f950963314742887d8b90f835e82a5d4a"},
+    {file = "holochain_serialization-0.1.0.tar.gz", hash = "sha256:ea3edf4ee306c1821ae60f86811e79f85278789b6fe7a3307ee257b993f70169"},
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -471,4 +521,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "5ca26743d8c2cd7d44226fcfe0b6e7a0b99410f677e51051175c4727634c08c1"
+content-hash = "11ac1c5897bbf023d753cc40e61887a9ed999dce5e8285db47ff6e4232274f91"

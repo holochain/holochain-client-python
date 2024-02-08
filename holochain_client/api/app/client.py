@@ -1,13 +1,14 @@
 from typing import Any, Dict, List, Optional
 import asyncio
 import websockets
-from holochain_client.api.app.types import ZomeCallUnsigned
+from holochain_client.api.app.types import CallZome, ZomeCallUnsigned
 from holochain_client.api.common.pending_request_pool import PendingRequestPool
 from holochain_client.api.common.request import create_wire_message_request
 from holochain_client.api.common.signing import get_from_creds_store
 import msgpack
 from nacl.utils import random
 from datetime import datetime
+from holochain_serialization import ZomeCallUnsignedPy, get_data_to_sign
 
 class AppClient:
     client: websockets.WebSocketClientProtocol
@@ -33,17 +34,34 @@ class AppClient:
                 f"No signing credentials have been authorized for cell_id: {request.cell_id}"
             )
 
-        payload = {
-            'cell_id': request.cell_id,
-            'zome_name': request.zome_name,
-            'fn_name': request.fn_name,
-            'payload': msgpack.packb(request.payload),
-            'provenance': request.provenance,
-            'nonce': random(32),
-            'cap_secret': request.cap_secret,
-            # 5 minutes in microseconds
-            'expires_at': (datetime.now().timestamp() + 5 * 60) * 1e6
-        }
+        provenance = signing_credentials.signing_key.identity # Request is actually made on behalf of the siging credentials, not the current agent!
+        nonce = random(32)
+        expires_at = int((datetime.now().timestamp() + 5 * 60) * 1e6)
+        cap_secret = signing_credentials.cap_secret
+
+        zome_call_py = ZomeCallUnsignedPy(provenance, request.cell_id[0], request.cell_id[1], request.zome_name, request.fn_name, request.payload, nonce, expires_at, cap_secret=cap_secret)
+        data_to_sign = bytes(get_data_to_sign(zome_call_py))
+        print("data_to_sign: ", data_to_sign)
+        signature = signing_credentials.signing_key.sign(data_to_sign)
+        print("signature: ", [x for x in signature])
+
+        print("Provenance, pub key: ", [x for x in provenance[3:35]])
+        print("Pub key: ", [x for x in signing_credentials.signing_key._signing_key.verify_key.to_curve25519_public_key()._public_key])
+
+        print(f"Export pub key: {signing_credentials.signing_key._signing_key.verify_key.to_curve25519_public_key()._public_key.hex()}, private key: {signing_credentials.signing_key._signing_key.to_curve25519_private_key()._private_key.hex()}, signature: {signature.hex()}, data to sign {data_to_sign.hex()}")
+
+        request = CallZome(
+            cell_id=request.cell_id,
+            zome_name=request.zome_name,
+            fn_name=request.fn_name,
+            payload=request.payload,
+            provenance=provenance,
+            signature=signature,
+            nonce=nonce,
+            expires_at=expires_at,
+            cap_secret=cap_secret,
+        )
+
         response = await self._exchange(request)
         assert response["type"] == "zome_called", f"response was: {response}"
         return response["data"]

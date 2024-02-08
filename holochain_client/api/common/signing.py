@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Dict, Optional
 from nacl.signing import SigningKey
 from holochain_client.api.admin.client import AdminClient
@@ -37,7 +38,11 @@ class SigningKeyWithIdentity:
         )
         assert len(self.identity) == 39
 
+    def sign(self, data: bytes) -> bytes:
+        return self._signing_key.sign(data).signature
 
+
+@dataclasses.dataclass
 class SigningCredentials:
     cap_secret: bytes
     signing_key: SigningKeyWithIdentity
@@ -67,8 +72,6 @@ async def authorize_signing_credentials(
 ):
     signing_keypair = generate_signing_keypair()
     cap_secret = random(64)
-    print("Using cell id ", cell_id)
-    print("Using identity ", signing_keypair.identity)
     await admin_client.grant_zome_call_capability(
         GrantZomeCallCapability(
             cell_id=cell_id,
@@ -84,4 +87,4 @@ async def authorize_signing_credentials(
         )
     )
 
-    _add_to_creds_store(cell_id, SigningCredentials)
+    _add_to_creds_store(cell_id, SigningCredentials(cap_secret, signing_keypair))

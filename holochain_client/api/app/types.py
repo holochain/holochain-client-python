@@ -8,17 +8,15 @@ from holochain_client.api.common.types import (
     ZomeName,
 )
 
-@dataclasses
+@dataclasses.dataclass
 class ZomeCallUnsigned:
-    provenance: AgentPubKey
     cell_id: CellId
     zome_name: ZomeName
     fn_name: FunctionName
-    cap_secret: Optional[bytes] = None
     payload: Any
 
 @dataclasses.dataclass
-class ZomeCall:
+class CallZome:
     cell_id: CellId
     zome_name: ZomeName
     fn_name: FunctionName
@@ -28,4 +26,4 @@ class ZomeCall:
     nonce: bytes
     """Microseconds from unix epoch"""
     expires_at: int
-    cap_secret: Optional[bytes] = None
+    cap_secret: bytes
