@@ -4,7 +4,7 @@
     inputs = {
         versions.url = "github:holochain/holochain?dir=versions/0_2";
 
-        versions.inputs.holochain.url = "github:holochain/holochain/holochain-0.2.5";
+        versions.inputs.holochain.url = "github:holochain/holochain/holochain-0.2.6";
 
         holochain = {
             url = "github:holochain/holochain";
