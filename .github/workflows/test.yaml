@@ -33,7 +33,7 @@ jobs:
           name: holochain-ci
 
       - name: Build fixture
-        run: nix develop -c $SHELL -c "cd test/fixture && npm install && npm run build:happ"
+        run: nix develop -c $SHELL -c "cd fixture && npm install && npm run build:happ"
 
       - name: Prepare environment
         run: nix develop -c $SHELL -c "python -m venv .venv && source .venv/bin/activate && poetry install --no-root"
