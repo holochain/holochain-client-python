@@ -21,7 +21,7 @@ def _create_request(req: Any) -> bytes:
         # Remove any None values from the data, no need to send fields without values
         data = {k: v for k, v in data.items() if v is not None}
     req = AdminRequest(tag, data)
-    print("Sending request: ", req)
+    print("Sending request: ", req) # TODO logging
     return msgpack.packb(dataclasses.asdict(req))
 
 

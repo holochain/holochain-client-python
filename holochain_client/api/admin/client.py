@@ -36,7 +36,6 @@ class AdminClient:
     async def install_app(self, request: InstallApp) -> AppInfo:
         response = await self._exchange(request)
         assert response["type"] == "app_installed", f"response was: {response}"
-        print("Install app response was: ", response)
         return AppInfo(**response["data"])
 
     async def generate_agent_pub_key(
@@ -73,7 +72,6 @@ class AdminClient:
     async def grant_zome_call_capability(
         self, grant_zome_call_capability: GrantZomeCallCapability
     ):
-        print("Sending grant_zome_call_capability: ", grant_zome_call_capability)
         response = await self._exchange(grant_zome_call_capability)
         assert (
             response["type"] == "zome_call_capability_granted"

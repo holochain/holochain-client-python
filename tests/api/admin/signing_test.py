@@ -25,7 +25,6 @@ async def test_authorize_signing_credentials():
                 path=harness.fixture_path,
             )
         )
-        print("response: ", response)
 
         await harness.admin_client.enable_app(
             EnableApp(installed_app_id=response.installed_app_id)

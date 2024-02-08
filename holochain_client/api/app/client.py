@@ -40,14 +40,7 @@ class AppClient:
 
         zome_call_py = ZomeCallUnsignedPy(provenance, request.cell_id[0], request.cell_id[1], request.zome_name, request.fn_name, request.payload, nonce, expires_at, cap_secret=cap_secret)
         data_to_sign = bytes(get_data_to_sign(zome_call_py))
-        print("data_to_sign: ", data_to_sign)
         signature = signing_credentials.signing_key.sign(data_to_sign)
-        print("signature: ", [x for x in signature])
-
-        # print("Provenance, pub key: ", [x for x in provenance[3:35]])
-        # print("Pub key: ", [x for x in signing_credentials.signing_key._signing_key.verify_key.to_curve25519_public_key()._public_key])
-
-        # print(f"Export pub key: {signing_credentials.signing_key._signing_key.verify_key.to_curve25519_public_key()._public_key.hex()}, private key: {signing_credentials.signing_key._signing_key.to_curve25519_private_key()._private_key.hex()}, signature: {signature.hex()}, data to sign {data_to_sign.hex()}")
 
         request = CallZome(
             cell_id=request.cell_id,
