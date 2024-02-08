@@ -5,6 +5,9 @@
 
 # Holochain Client - Python
 
+> [!WARNING]
+> :warning: This package is under development, it is not a complete Holochain client and is not fully tested! :warning:
+
 ### Set up a development environment
 
 The developer environment for this project relies on Holonix, which you can find out more about in the Holochain [getting started guide](https://developer.holochain.org/get-started/). Once you have Nix installed, you can create a new development environment by entering the following command into your shell at the root of this project:
