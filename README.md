@@ -63,7 +63,7 @@ poetry run pytest tests/api/app/client_test.py -k test_call_zome
 ```
 
 > [!TIP]
-> By default `pytest` captures output. Use the `-s` flag in combination with `RUST_LOG=1` to debug tests against Holochain.
+> By default `pytest` captures output. Use the `-s` flag in combination with `RUST_LOG=info` to debug tests against Holochain.
 
 ### Keep the code tidy
 
