@@ -39,6 +39,7 @@ class TestHarness:
         await self.admin_client.close()
         self._sandbox_process.send_signal(signal.SIGINT)
 
+
 def _start_holochain() -> Tuple[Popen, int]:
     ps = run(["hc", "sandbox", "clean"])
     if ps.returncode != 0:

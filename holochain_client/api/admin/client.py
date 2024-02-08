@@ -57,7 +57,9 @@ class AdminClient:
         assert response["type"] == "app_enabled", f"response was: {response}"
         return AppEnabled(*response["data"])
 
-    async def attach_app_interface(self, request: AttachAppInterface = AttachAppInterface()) -> AppInterfaceAttached:
+    async def attach_app_interface(
+        self, request: AttachAppInterface = AttachAppInterface()
+    ) -> AppInterfaceAttached:
         response = await self._exchange(request)
         assert response["type"] == "app_interface_attached", f"response was: {response}"
         return AppInterfaceAttached(port=int(response["data"]["port"]))

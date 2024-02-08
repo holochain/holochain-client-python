@@ -220,9 +220,11 @@ class AppEnabled:
     app: AppInfo
     errors: List[Tuple[CellId, str]]
 
+
 @dataclass
 class AttachAppInterface:
     port: Optional[int] = None
+
 
 @dataclass
 class AppInterfaceAttached:

@@ -9,6 +9,7 @@ import os
 from datetime import datetime
 from holochain_serialization import ZomeCallUnsignedPy, get_data_to_sign
 
+
 class AppClient:
     client: websockets.WebSocketClientProtocol
     requestId: int = 0
@@ -33,12 +34,24 @@ class AppClient:
                 f"No signing credentials have been authorized for cell_id: {request.cell_id}"
             )
 
-        provenance = signing_credentials.signing_key.identity # Request is actually made on behalf of the siging credentials, not the current agent!
+        provenance = (
+            signing_credentials.signing_key.identity
+        )  # Request is actually made on behalf of the siging credentials, not the current agent!
         nonce = os.urandom(32)
         expires_at = int((datetime.now().timestamp() + 5 * 60) * 1e6)
         cap_secret = signing_credentials.cap_secret
 
-        zome_call_py = ZomeCallUnsignedPy(provenance, request.cell_id[0], request.cell_id[1], request.zome_name, request.fn_name, request.payload, nonce, expires_at, cap_secret=cap_secret)
+        zome_call_py = ZomeCallUnsignedPy(
+            provenance,
+            request.cell_id[0],
+            request.cell_id[1],
+            request.zome_name,
+            request.fn_name,
+            request.payload,
+            nonce,
+            expires_at,
+            cap_secret=cap_secret,
+        )
         data_to_sign = bytes(get_data_to_sign(zome_call_py))
         signature = signing_credentials.signing_key.sign(data_to_sign)
 
