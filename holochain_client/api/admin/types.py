@@ -61,9 +61,9 @@ class AppRoleDnaManifest:
 class AppRoleManifest:
     name: RoleName
     dna: AppRoleDnaManifest
-    provisioning: Optional[Union[CellProvisioningCreate, CellProvisioningCloneOnly]] = (
-        None
-    )
+    provisioning: Optional[
+        Union[CellProvisioningCreate, CellProvisioningCloneOnly]
+    ] = None
 
 
 @dataclass

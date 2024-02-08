@@ -1,4 +1,3 @@
-
 DnaHash = bytes
 AgentPubKey = bytes
 CellId = [DnaHash, AgentPubKey]

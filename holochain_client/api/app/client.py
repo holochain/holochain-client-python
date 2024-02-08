@@ -34,9 +34,7 @@ class AppClient:
                 f"No signing credentials have been authorized for cell_id: {request.cell_id}"
             )
 
-        provenance = (
-            signing_credentials.signing_key.identity
-        )  # Request is actually made on behalf of the siging credentials, not the current agent!
+        provenance = signing_credentials.signing_key.identity  # Request is actually made on behalf of the siging credentials, not the current agent!
         nonce = os.urandom(32)
         expires_at = int((datetime.now().timestamp() + 5 * 60) * 1e6)
         cap_secret = signing_credentials.cap_secret
