@@ -1,6 +1,6 @@
 import dataclasses
 from typing import Dict, Optional
-from nacl.signing import SigningKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from holochain_client.api.admin.client import AdminClient
 from holochain_client.api.admin.types import (
     CapAccessAssigned,
@@ -9,17 +9,17 @@ from holochain_client.api.admin.types import (
     ZomeCallCapGrant,
 )
 from holochain_client.api.common.types import AgentPubKey, CellId
-from nacl.utils import random
+import os
 import base64
 
 
 class SigningKeyWithIdentity:
-    _signing_key: SigningKey
+    _signing_key: Ed25519PrivateKey
 
     """This will be recognised by Holochain as an agent public key but just contains the generated signing key associated with the signing keypair above."""
     identity: AgentPubKey
 
-    def __init__(self, signing_key: SigningKey):
+    def __init__(self, signing_key: Ed25519PrivateKey):
         self._signing_key = signing_key
 
         # The first 3 bytes are the constant AGENT_PREFIX from holochain/holochain and the last 4 bytes are the location bytes which
@@ -29,7 +29,7 @@ class SigningKeyWithIdentity:
                 132,
                 32,
                 36,
-                *bytes(signing_key.verify_key.to_curve25519_public_key()),
+                *signing_key.public_key().public_bytes_raw(),
                 0,
                 0,
                 0,
@@ -39,7 +39,7 @@ class SigningKeyWithIdentity:
         assert len(self.identity) == 39
 
     def sign(self, data: bytes) -> bytes:
-        return self._signing_key.sign(data).signature
+        return self._signing_key.sign(data)
 
 
 @dataclasses.dataclass
@@ -49,7 +49,7 @@ class SigningCredentials:
 
 
 def generate_signing_keypair() -> SigningKeyWithIdentity:
-    signing_key = SigningKey.generate()
+    signing_key = Ed25519PrivateKey.generate()
 
     return SigningKeyWithIdentity(signing_key)
 
@@ -71,7 +71,7 @@ async def authorize_signing_credentials(
     functions: Optional[GrantedFunctions] = None,
 ):
     signing_keypair = generate_signing_keypair()
-    cap_secret = random(64)
+    cap_secret = os.urandom(64)
     await admin_client.grant_zome_call_capability(
         GrantZomeCallCapability(
             cell_id=cell_id,
