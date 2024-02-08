@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Any, Optional
+from typing import Any
 
 from holochain_client.api.common.types import (
     AgentPubKey,

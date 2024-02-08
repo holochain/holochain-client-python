@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List
 import asyncio
 import websockets
 from holochain_client.api.admin.types import (

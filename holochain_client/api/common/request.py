@@ -6,8 +6,6 @@ from holochain_client.api.admin.types import (
 import msgpack
 import dataclasses
 import re
-from holochain_client.api.common.pending_request_pool import PendingRequestPool
-from holochain_client.api.common.types import AgentPubKey
 
 
 def _create_request(req: Any) -> bytes:

@@ -1,5 +1,4 @@
 import pytest
-from holochain_client.api.admin.client import AdminClient
 from holochain_client.api.admin.types import (
     InstallApp,
 )

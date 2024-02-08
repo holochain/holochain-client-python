@@ -1,5 +1,4 @@
 import pytest
-from holochain_client.api.app.client import AppClient
 from holochain_client.api.admin.types import (
     EnableApp,
     InstallApp,
