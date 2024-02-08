@@ -29,4 +29,52 @@ Then install dependencies using Poetry:
 poetry install --no-root
 ```
 
-TODO: How to verify your development environment?
+Running the tests is a good way to check your development environment!
+
+### Run the tests
+
+The tests rely on a fixture. The fixture is a simple Holochain app that contains a single zome. It must be built before running the tests. You can do this using:
+
+```bash
+cd fixture
+npm install
+npm run build:happ
+cd ..
+```
+
+If that succeeds then the tests will be able to find the built happ and you can move on to running the tests.
+
+You can run all the tests using:
+
+```bash
+poetry run pytest
+```
+
+To select a single test suite, pass the path to `pytest`. For example:
+
+```bash
+poetry run tests/api/app/client_test.py
+```
+
+To run a single test, pass the path to the test suite and the use the `-k` flag. For example:
+
+```bash
+poetry run pytest tests/api/app/client_test.py -k test_call_zome
+```
+
+> [!TIP]
+> By default `pytest` captures output. Use the `-s` flag in combination with `RUST_LOG=1` to debug tests against Holochain.
+
+### Keep the code tidy
+
+Linting and formatting are done by one tool, [Ruff](https://docs.astral.sh/ruff/). Run it using:
+
+```bash
+poetry run ruff .
+```
+
+If you want it to automatically fix the problems it finds, then use:
+
+```bash
+poetry run ruff . --fix
+```
