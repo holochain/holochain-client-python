@@ -27,7 +27,7 @@ async def test_call_zome():
         cell_id = app_info.cell_info["fixture"][0]["provisioned"]["cell_id"]
         await authorize_signing_credentials(harness.admin_client, cell_id)
 
-        await harness.app_client.call_zome(
+        response = await harness.app_client.call_zome(
             ZomeCallUnsigned(
                 cell_id=cell_id,
                 zome_name="fixture",
@@ -35,3 +35,6 @@ async def test_call_zome():
                 payload=msgpack.packb({"name": "hello fixture"}),
             )
         )
+
+        response_struct = msgpack.unpackb(response)
+        assert response_struct["signed_action"]["hashed"]["content"]["author"] == agent_pub_key
