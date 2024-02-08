@@ -67,14 +67,20 @@ poetry run pytest tests/api/app/client_test.py -k test_call_zome
 
 ### Keep the code tidy
 
-Linting and formatting are done by one tool, [Ruff](https://docs.astral.sh/ruff/). Run it using:
+Linting and formatting are done by one tool, [Ruff](https://docs.astral.sh/ruff/). Run the linter using:
 
 ```bash
-poetry run ruff .
+poetry run ruff check
 ```
 
 If you want it to automatically fix the problems it finds, then use:
 
 ```bash
-poetry run ruff . --fix
+poetry run ruff check --fix
+```
+
+Run the formatter using:
+
+```bash
+poetry run ruff format
 ```
