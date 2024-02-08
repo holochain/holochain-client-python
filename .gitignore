@@ -2,6 +2,8 @@
 /fixture/node_modules
 /.cargo
 
+.ruff_cache
+
 .hc
 .hc_*
 *.dna
