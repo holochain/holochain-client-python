@@ -6,7 +6,7 @@
 # Holochain Client - Python
 
 > [!WARNING]
-> :warning: This package is under development, it is not a complete Holochain client and is not fully tested! :warning:
+> :radioactive: This package is under development, it is not a complete Holochain client and is not fully tested! :radioactive:
 
 ### Set up a development environment
 
