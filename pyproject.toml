@@ -21,7 +21,6 @@ websockets = "^12.0"
 holochain-serialization = "^0.1.0"
 cryptography = "^42.0.2"
 ruff = "^0.2.1"
-black = "^24.1.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.0.0"
