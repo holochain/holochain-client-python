@@ -40,6 +40,16 @@ async def test_list_apps():
 
 
 @pytest.mark.asyncio
+async def test_attach_app_interface():
+    async with TestHarness() as harness:
+        app_interface = await harness.admin_client.attach_app_interface()
+        assert app_interface.port > 0
+
+        listed = await harness.admin_client.list_app_interfaces()
+        assert app_interface.port in listed
+
+
+@pytest.mark.asyncio
 async def test_dump_network_stats():
     async with TestHarness() as harness:
         network_stats = await harness.admin_client.dump_network_stats()

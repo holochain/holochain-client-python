@@ -11,6 +11,7 @@ from holochain_client.api.admin.types import (
     GenerateAgentPubKey,
     GrantZomeCallCapability,
     InstallApp,
+    ListAppInterfaces,
     ListApps,
 )
 import json
@@ -75,6 +76,11 @@ class AdminClient:
         response = await self._exchange(request)
         assert response["type"] == "app_interface_attached", f"response was: {response}"
         return AppInterfaceAttached(port=int(response["data"]["port"]))
+
+    async def list_app_interfaces(self, request: ListAppInterfaces = ListAppInterfaces()) -> List[int]:
+        response = await self._exchange(request)
+        assert response["type"] == "app_interfaces_listed", f"response was: {response}"
+        return response["data"]
 
     async def dump_network_stats(
         self, request: DumpNetworkStats = DumpNetworkStats()

@@ -229,3 +229,8 @@ class AttachAppInterface:
 @dataclass
 class AppInterfaceAttached:
     port: int
+
+
+@dataclass
+class ListAppInterfaces:
+    pass
