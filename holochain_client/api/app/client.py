@@ -18,7 +18,7 @@ class AppClient:
     requestId: int = 0
     pendingRequestPool: PendingRequestPool
 
-    def __init__(self, url: str, defaultTimeout: int) -> None:
+    def __init__(self, url: str, defaultTimeout: int = 60) -> None:
         self.url = url
         self.defaultTimeout = defaultTimeout
 
