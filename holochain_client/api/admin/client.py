@@ -39,8 +39,8 @@ class AdminClient:
         await self.connect()
         return self
     
-    def connect_sync(self):
-        return asyncio.get_event_loop().run_until_complete(self.connect())
+    def connect_sync(self, event_loop):
+        return event_loop.run_until_complete(self.connect())
 
     async def connect(self):
         self.client = await websockets.connect(self.url)
