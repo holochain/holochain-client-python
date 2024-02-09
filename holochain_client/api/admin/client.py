@@ -20,18 +20,30 @@ from holochain_client.api.common.types import AgentPubKey
 
 
 class AdminClient:
+    url: str
+    defaultTimeout: int
+
     client: websockets.WebSocketClientProtocol
     requestId: int = 0
     pendingRequestPool: PendingRequestPool
-    defaultTimeout: int
 
+    def __init__(self, url: str, defaultTimeout: int = 60):
+        self.url = url
+        self.defaultTimeout = defaultTimeout
+    
     @classmethod
     async def create(cls, url: str, defaultTimeout: int = 60):
-        self = cls()
-        self.client = await websockets.connect(url)
-        self.pendingRequestPool = PendingRequestPool(self.client)
-        self.defaultTimeout = defaultTimeout
+        """The recommended way to create an AdminClient"""
+        self = cls(url, defaultTimeout)
+        await self.connect()
         return self
+    
+    def connect_sync(self):
+        return asyncio.get_event_loop().run_until_complete(self.connect())
+
+    async def connect(self):
+        self.client = await websockets.connect(self.url)
+        self.pendingRequestPool = PendingRequestPool(self.client)
 
     async def install_app(self, request: InstallApp) -> AppInfo:
         response = await self._exchange(request)

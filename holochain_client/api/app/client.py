@@ -11,17 +11,30 @@ from holochain_serialization import ZomeCallUnsignedPy, get_data_to_sign
 
 
 class AppClient:
+    url: str
+    defaultTimeout: int
+
     client: websockets.WebSocketClientProtocol
     requestId: int = 0
     pendingRequestPool: PendingRequestPool
-    defaultTimeout: int
+
+    def __init__(self, url: str, defaultTimeout: int) -> None:
+        self.url = url
+        self.defaultTimeout = defaultTimeout
 
     @classmethod
     async def create(cls, url: str, defaultTimeout: int = 60):
-        self = cls()
-        self.client = await websockets.connect(url)
+        """The recommended way to create an AppClient"""
+        self = cls(url, defaultTimeout)
+        await self.connect()
+        return self
+
+    def connect_sync(self):
+        asyncio.get_event_loop().run_until_complete(self.connect())
+
+    async def connect(self):
+        self.client = await websockets.connect(self.url)
         self.pendingRequestPool = PendingRequestPool(self.client)
-        self.defaultTimeout = defaultTimeout
         return self
 
     async def call_zome(self, request: ZomeCallUnsigned) -> bytes:
