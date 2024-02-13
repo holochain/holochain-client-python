@@ -245,3 +245,16 @@ class InterfaceDriverWebsocket:
 @dataclass
 class AddAdminInterface:
     driver: Union[InterfaceDriverWebsocket]
+
+
+@dataclass
+class RegisterDnaPayloadPath:
+    path: str
+    modifiers: Optional[DnaModifiers] = None
+
+@dataclass
+class RegisterDnaPayloadHash:
+    hash: DnaHash
+    modifiers: DnaModifiers
+
+RegisterDnaPayload = Union[RegisterDnaPayloadPath, RegisterDnaPayloadHash]

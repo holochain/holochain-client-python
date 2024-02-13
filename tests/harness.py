@@ -31,6 +31,15 @@ class TestHarness:
             )
         self.fixture_path = str(fixture_path)
 
+        fixture_dna_path = (
+            Path(__file__).parent / "../fixture/dnas/fixture/workdir/fixture.dna"
+        ).resolve()
+        if not path.exists(fixture_dna_path):
+            raise Exception(
+                "Fixture DNA does not exist, please build it before running this test"
+            )
+        self.fixture_dna_path = str(fixture_dna_path)
+
         return self
 
     async def __aexit__(self, exc_type, exc, tb):

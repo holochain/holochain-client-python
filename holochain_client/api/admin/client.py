@@ -14,11 +14,12 @@ from holochain_client.api.admin.types import (
     InstallApp,
     ListAppInterfaces,
     ListApps,
+    RegisterDnaPayload,
 )
 import json
 from holochain_client.api.common.pending_request_pool import PendingRequestPool
 from holochain_client.api.common.request import create_wire_message_request, tag_from_type
-from holochain_client.api.common.types import AgentPubKey
+from holochain_client.api.common.types import AgentPubKey, DnaHash
 import inspect
 
 
@@ -51,6 +52,11 @@ class AdminClient:
     async def add_admin_interfaces(self, request: List[AddAdminInterface]):
         response = await self._exchange(request, tag=inspect.currentframe().f_code.co_name)
         assert response["type"] == "admin_interfaces_added", f"response was: {response}"
+
+    async def register_dna(self, request: RegisterDnaPayload) -> DnaHash:
+        response = await self._exchange(request, tag=inspect.currentframe().f_code.co_name)
+        assert response["type"] == "dna_registered", f"response was: {response}"
+        return response["data"]
 
     async def install_app(self, request: InstallApp) -> AppInfo:
         response = await self._exchange(request, tag_from_type(request))
