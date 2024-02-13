@@ -234,3 +234,14 @@ class AppInterfaceAttached:
 @dataclass
 class ListAppInterfaces:
     pass
+
+
+@dataclass
+class InterfaceDriverWebsocket:
+    port: int
+    type: str = "websocket"
+
+
+@dataclass
+class AddAdminInterface:
+    driver: Union[InterfaceDriverWebsocket]

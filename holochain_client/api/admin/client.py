@@ -2,6 +2,7 @@ from typing import Any, List
 import asyncio
 import websockets
 from holochain_client.api.admin.types import (
+    AddAdminInterface,
     AppEnabled,
     AppInfo,
     AppInterfaceAttached,
@@ -16,8 +17,9 @@ from holochain_client.api.admin.types import (
 )
 import json
 from holochain_client.api.common.pending_request_pool import PendingRequestPool
-from holochain_client.api.common.request import create_wire_message_request
+from holochain_client.api.common.request import create_wire_message_request, tag_from_type
 from holochain_client.api.common.types import AgentPubKey
+import inspect
 
 
 class AdminClient:
@@ -46,53 +48,57 @@ class AdminClient:
         self.client = await websockets.connect(self.url)
         self.pendingRequestPool = PendingRequestPool(self.client)
 
+    async def add_admin_interfaces(self, request: List[AddAdminInterface]):
+        response = await self._exchange(request, tag=inspect.currentframe().f_code.co_name)
+        assert response["type"] == "admin_interfaces_added", f"response was: {response}"
+
     async def install_app(self, request: InstallApp) -> AppInfo:
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "app_installed", f"response was: {response}"
         return AppInfo(**response["data"])
 
     async def generate_agent_pub_key(
         self, request: GenerateAgentPubKey = GenerateAgentPubKey()
     ) -> AgentPubKey:
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert (
             response["type"] == "agent_pub_key_generated"
         ), f"response was: {response}"
         return response["data"]
 
     async def list_apps(self, request: ListApps = ListApps()) -> List[AppInfo]:
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "apps_listed", f"response was: {response}"
         return [AppInfo(**x) for x in response["data"]]
 
     async def enable_app(self, request: EnableApp) -> AppEnabled:
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "app_enabled", f"response was: {response}"
         return AppEnabled(*response["data"])
 
     async def attach_app_interface(
         self, request: AttachAppInterface = AttachAppInterface()
     ) -> AppInterfaceAttached:
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "app_interface_attached", f"response was: {response}"
         return AppInterfaceAttached(port=int(response["data"]["port"]))
 
     async def list_app_interfaces(self, request: ListAppInterfaces = ListAppInterfaces()) -> List[int]:
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "app_interfaces_listed", f"response was: {response}"
         return response["data"]
 
     async def dump_network_stats(
         self, request: DumpNetworkStats = DumpNetworkStats()
     ) -> object:
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "network_stats_dumped", f"response was: {response}"
         return json.loads(response["data"])
 
     async def grant_zome_call_capability(
-        self, grant_zome_call_capability: GrantZomeCallCapability
+        self, request: GrantZomeCallCapability
     ):
-        response = await self._exchange(grant_zome_call_capability)
+        response = await self._exchange(request, tag_from_type(request))
         assert (
             response["type"] == "zome_call_capability_granted"
         ), f"response was: {response}"
@@ -100,10 +106,10 @@ class AdminClient:
     async def close(self):
         await self.client.close()
 
-    async def _exchange(self, request: Any) -> Any:
+    async def _exchange(self, request: Any, tag: str) -> Any:
         requestId = self.requestId
         self.requestId += 1
-        req = create_wire_message_request(request, requestId)
+        req = create_wire_message_request(request, tag, requestId)
         await self.client.send(req)
 
         completed = asyncio.Event()

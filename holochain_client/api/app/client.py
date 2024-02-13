@@ -3,7 +3,7 @@ import asyncio
 import websockets
 from holochain_client.api.app.types import CallZome, ZomeCallUnsigned
 from holochain_client.api.common.pending_request_pool import PendingRequestPool
-from holochain_client.api.common.request import create_wire_message_request
+from holochain_client.api.common.request import create_wire_message_request, tag_from_type
 from holochain_client.api.common.signing import get_from_creds_store
 import os
 from datetime import datetime
@@ -78,17 +78,17 @@ class AppClient:
             cap_secret=cap_secret,
         )
 
-        response = await self._exchange(request)
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "zome_called", f"response was: {response}"
         return response["data"]
 
     async def close(self):
         await self.client.close()
 
-    async def _exchange(self, request: Any) -> Any:
+    async def _exchange(self, request: Any, tag: str) -> Any:
         requestId = self.requestId
         self.requestId += 1
-        req = create_wire_message_request(request, requestId)
+        req = create_wire_message_request(request, tag, requestId)
         await self.client.send(req)
 
         completed = asyncio.Event()

@@ -8,14 +8,21 @@ import dataclasses
 import re
 
 
-def _create_request(req: Any) -> bytes:
+def tag_from_type(req: Any) -> str:
     # TODO compile
-    tag = re.sub(r"(?<!^)(?=[A-Z])", "_", req.__class__.__name__).lower()
-    data = dataclasses.asdict(req)
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", req.__class__.__name__).lower()
+
+
+def _create_request(req: Any, tag: str) -> bytes:
+    if isinstance(req, list):
+        data = [dataclasses.asdict(x) for x in req]
+    else:
+        data = dataclasses.asdict(req)
+
     if len(data) == 0:
         # If there is no data, we should send None instead of an empty dict
         data = None
-    else:
+    elif isinstance(data, dict):
         # Remove any None values from the data, no need to send fields without values
         data = {k: v for k, v in data.items() if v is not None}
     req = AdminRequest(tag, data)
@@ -23,7 +30,7 @@ def _create_request(req: Any) -> bytes:
     return msgpack.packb(dataclasses.asdict(req))
 
 
-def create_wire_message_request(req: Any, requestId: int) -> bytes:
-    data = _create_request(req)
+def create_wire_message_request(req: Any, tag: str, requestId: int) -> bytes:
+    data = _create_request(req, tag)
     msg = WireMessageRequest(id=requestId, data=[x for x in data])
     return msgpack.packb(dataclasses.asdict(msg))

@@ -1,8 +1,31 @@
 import pytest
 from holochain_client.api.admin.types import (
+    AddAdminInterface,
+    InterfaceDriverWebsocket,
     InstallApp,
 )
+from holochain_client.api.admin.client import AdminClient
 from tests.harness import TestHarness
+
+
+@pytest.mark.asyncio
+async def test_add_admin_interface():
+    async with TestHarness() as harness:
+        # Get a free port
+        import socket
+        sock = socket.socket()
+        sock.bind(('', 0))
+        port = sock.getsockname()[1]
+        sock.close()
+
+        await harness.admin_client.add_admin_interfaces([AddAdminInterface(InterfaceDriverWebsocket(port))])
+
+        new_admin_client = await AdminClient.create(f"ws://localhost:{port}")
+
+        agent_pub_key = await new_admin_client.generate_agent_pub_key()
+        await new_admin_client.close()
+        assert len(agent_pub_key) == 39
+
 
 
 @pytest.mark.asyncio
