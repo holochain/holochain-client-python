@@ -16,6 +16,8 @@ def tag_from_type(req: Any) -> str:
 def _create_request(req: Any, tag: str) -> bytes:
     if isinstance(req, list):
         data = [dataclasses.asdict(x) for x in req]
+    elif isinstance(req, bytes):
+        data = req
     else:
         data = dataclasses.asdict(req)
 

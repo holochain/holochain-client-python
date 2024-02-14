@@ -37,4 +37,7 @@ async def test_call_zome():
         )
 
         response_struct = msgpack.unpackb(response)
-        assert response_struct["signed_action"]["hashed"]["content"]["author"] == agent_pub_key
+        assert (
+            response_struct["signed_action"]["hashed"]["content"]["author"]
+            == agent_pub_key
+        )

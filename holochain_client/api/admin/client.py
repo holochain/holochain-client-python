@@ -18,7 +18,10 @@ from holochain_client.api.admin.types import (
 )
 import json
 from holochain_client.api.common.pending_request_pool import PendingRequestPool
-from holochain_client.api.common.request import create_wire_message_request, tag_from_type
+from holochain_client.api.common.request import (
+    create_wire_message_request,
+    tag_from_type,
+)
 from holochain_client.api.common.types import AgentPubKey, DnaHash
 import inspect
 
@@ -34,14 +37,14 @@ class AdminClient:
     def __init__(self, url: str, defaultTimeout: int = 60):
         self.url = url
         self.defaultTimeout = defaultTimeout
-    
+
     @classmethod
     async def create(cls, url: str, defaultTimeout: int = 60):
         """The recommended way to create an AdminClient"""
         self = cls(url, defaultTimeout)
         await self.connect()
         return self
-    
+
     def connect_sync(self, event_loop):
         return event_loop.run_until_complete(self.connect())
 
@@ -50,12 +53,25 @@ class AdminClient:
         self.pendingRequestPool = PendingRequestPool(self.client)
 
     async def add_admin_interfaces(self, request: List[AddAdminInterface]):
-        response = await self._exchange(request, tag=inspect.currentframe().f_code.co_name)
+        response = await self._exchange(
+            request, tag=inspect.currentframe().f_code.co_name
+        )
         assert response["type"] == "admin_interfaces_added", f"response was: {response}"
 
     async def register_dna(self, request: RegisterDnaPayload) -> DnaHash:
-        response = await self._exchange(request, tag=inspect.currentframe().f_code.co_name)
+        response = await self._exchange(
+            request, tag=inspect.currentframe().f_code.co_name
+        )
         assert response["type"] == "dna_registered", f"response was: {response}"
+        return response["data"]
+
+    async def get_dna_definition(self, dna_hash: DnaHash) -> object:
+        response = await self._exchange(
+            dna_hash, tag=inspect.currentframe().f_code.co_name
+        )
+        assert (
+            response["type"] == "dna_definition_returned"
+        ), f"response was: {response}"
         return response["data"]
 
     async def install_app(self, request: InstallApp) -> AppInfo:
@@ -89,7 +105,9 @@ class AdminClient:
         assert response["type"] == "app_interface_attached", f"response was: {response}"
         return AppInterfaceAttached(port=int(response["data"]["port"]))
 
-    async def list_app_interfaces(self, request: ListAppInterfaces = ListAppInterfaces()) -> List[int]:
+    async def list_app_interfaces(
+        self, request: ListAppInterfaces = ListAppInterfaces()
+    ) -> List[int]:
         response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "app_interfaces_listed", f"response was: {response}"
         return response["data"]
@@ -101,9 +119,7 @@ class AdminClient:
         assert response["type"] == "network_stats_dumped", f"response was: {response}"
         return json.loads(response["data"])
 
-    async def grant_zome_call_capability(
-        self, request: GrantZomeCallCapability
-    ):
+    async def grant_zome_call_capability(self, request: GrantZomeCallCapability):
         response = await self._exchange(request, tag_from_type(request))
         assert (
             response["type"] == "zome_call_capability_granted"

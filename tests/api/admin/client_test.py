@@ -16,12 +16,15 @@ async def test_add_admin_interface():
     async with TestHarness() as harness:
         # Get a free port
         import socket
+
         sock = socket.socket()
-        sock.bind(('', 0))
+        sock.bind(("", 0))
         port = sock.getsockname()[1]
         sock.close()
 
-        await harness.admin_client.add_admin_interfaces([AddAdminInterface(InterfaceDriverWebsocket(port))])
+        await harness.admin_client.add_admin_interfaces(
+            [AddAdminInterface(InterfaceDriverWebsocket(port))]
+        )
 
         new_admin_client = await AdminClient.create(f"ws://localhost:{port}")
 
@@ -33,12 +36,29 @@ async def test_add_admin_interface():
 @pytest.mark.asyncio
 async def test_register_dna():
     async with TestHarness() as harness:
-        dna_hash = await harness.admin_client.register_dna(RegisterDnaPayloadPath(harness.fixture_dna_path))
+        dna_hash = await harness.admin_client.register_dna(
+            RegisterDnaPayloadPath(harness.fixture_dna_path)
+        )
         assert len(dna_hash) == 39
 
-        dna_hash_alt = await harness.admin_client.register_dna(RegisterDnaPayloadHash(dna_hash, DnaModifiers(network_seed="testing")))
+        dna_hash_alt = await harness.admin_client.register_dna(
+            RegisterDnaPayloadHash(dna_hash, DnaModifiers(network_seed="testing"))
+        )
         assert len(dna_hash_alt) == 39
         assert dna_hash != dna_hash_alt
+
+
+@pytest.mark.asyncio
+async def test_get_dna_definition():
+    async with TestHarness() as harness:
+        dna_hash = await harness.admin_client.register_dna(
+            RegisterDnaPayloadPath(harness.fixture_dna_path)
+        )
+        assert len(dna_hash) == 39
+
+        dna_def = await harness.admin_client.get_dna_definition(dna_hash)
+        assert "name" in dna_def
+        assert dna_def["name"] == "fixture"
 
 
 @pytest.mark.asyncio
