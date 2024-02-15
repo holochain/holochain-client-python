@@ -260,3 +260,61 @@ class RegisterDnaPayloadHash:
 
 
 RegisterDnaPayload = Union[RegisterDnaPayloadPath, RegisterDnaPayloadHash]
+
+
+@dataclass
+class UpdateCoordinatorsPayloadPath:
+    dna_hash: DnaHash
+    path: str
+
+
+BundleLocation = Enum("ZomeManifestLocation", ["path", "bundle"])
+
+
+@dataclass
+class ZomeDependency:
+    name: str
+
+
+@dataclass
+class ZomeManifest:
+    name: str
+    location: BundleLocation
+    hash: Optional[bytes] = None
+    dependencies: Optional[List[ZomeDependency]] = None
+    dylib: Optional[str] = None
+
+
+@dataclass
+class IntegrityManifest:
+    zomes: List[ZomeManifest]
+    network_seed: Optional[str] = None
+    properties: Optional[str] = None
+    origin_time: Optional[str] = None
+
+
+@dataclass
+class CoordinatorManifest:
+    zomes: List[ZomeManifest]
+
+
+@dataclass
+class DnaManifest:
+    manifest_version: str
+    name: str
+    integrity: IntegrityManifest
+    coordinator: CoordinatorManifest
+
+
+@dataclass
+class CoordinatorBundle:
+    manifest: DnaManifest
+    resources: Dict[str, bytes]
+
+
+@dataclass
+class UpdateCoordinatorsPayloadBundle:
+    dna_hash: DnaHash
+    bundle: CoordinatorBundle
+
+UpdateCoordinatorsPayload = Union[UpdateCoordinatorsPayloadPath, UpdateCoordinatorsPayloadBundle]

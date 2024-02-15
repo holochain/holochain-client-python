@@ -15,6 +15,7 @@ from holochain_client.api.admin.types import (
     ListAppInterfaces,
     ListApps,
     RegisterDnaPayload,
+    UpdateCoordinatorsPayload,
 )
 import json
 from holochain_client.api.common.pending_request_pool import PendingRequestPool
@@ -73,6 +74,12 @@ class AdminClient:
             response["type"] == "dna_definition_returned"
         ), f"response was: {response}"
         return response["data"]
+
+    async def update_coordinators(self, request: UpdateCoordinatorsPayload):
+        response = await self._exchange(request, tag=inspect.currentframe().f_code.co_name)
+        assert (
+            response["type"] == "coordinators_updated"
+        ), f"response was: {response}"
 
     async def install_app(self, request: InstallApp) -> AppInfo:
         response = await self._exchange(request, tag_from_type(request))

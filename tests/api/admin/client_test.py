@@ -6,6 +6,7 @@ from holochain_client.api.admin.types import (
     InstallApp,
     RegisterDnaPayloadHash,
     RegisterDnaPayloadPath,
+    UpdateCoordinatorsPayloadPath,
 )
 from holochain_client.api.admin.client import AdminClient
 from tests.harness import TestHarness
@@ -60,6 +61,19 @@ async def test_get_dna_definition():
         assert "name" in dna_def
         assert dna_def["name"] == "fixture"
 
+
+@pytest.mark.asyncio
+async def test_update_coordinators():
+    async with TestHarness() as harness:
+        dna_hash = await harness.admin_client.register_dna(
+            RegisterDnaPayloadPath(harness.fixture_dna_path)
+        )
+        assert len(dna_hash) == 39
+
+        await harness.admin_client.update_coordinators(UpdateCoordinatorsPayloadPath(
+            dna_hash,
+            harness.fixture_dna_path
+        ))
 
 @pytest.mark.asyncio
 async def test_install_app():
