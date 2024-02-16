@@ -270,3 +270,8 @@ class UninstallApp:
 @dataclass
 class ListDnas:
     pass
+
+
+@dataclass
+class ListCellIds:
+    pass

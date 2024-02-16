@@ -14,6 +14,7 @@ from holochain_client.api.admin.types import (
     InstallApp,
     ListAppInterfaces,
     ListApps,
+    ListCellIds,
     ListDnas,
     RegisterDnaPayload,
     UninstallApp,
@@ -24,7 +25,7 @@ from holochain_client.api.common.request import (
     create_wire_message_request,
     tag_from_type,
 )
-from holochain_client.api.common.types import AgentPubKey, DnaHash
+from holochain_client.api.common.types import AgentPubKey, CellId, DnaHash
 import inspect
 
 
@@ -88,9 +89,7 @@ class AdminClient:
         assert response["type"] == "app_uninstalled", f"response was: {response}"
 
     async def list_dnas(self, request: ListDnas = ListDnas()) -> List[DnaHash]:
-        response = await self._exchange(
-            request, tag=inspect.currentframe().f_code.co_name
-        )
+        response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "dnas_listed", f"response was: {response}"
         return response["data"]
 
@@ -101,6 +100,12 @@ class AdminClient:
         assert (
             response["type"] == "agent_pub_key_generated"
         ), f"response was: {response}"
+        return response["data"]
+
+    async def list_cell_ids(self, request: ListCellIds = ListCellIds()) -> List[CellId]:
+        response = await self._exchange(request, tag_from_type(request))
+        assert response["type"] == "cell_ids_listed", f"response was: {response}"
+        print(response["data"])
         return response["data"]
 
     async def list_apps(self, request: ListApps = ListApps()) -> List[AppInfo]:

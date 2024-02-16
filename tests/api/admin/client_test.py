@@ -2,6 +2,7 @@ import pytest
 from holochain_client.api.admin.types import (
     AddAdminInterface,
     DnaModifiers,
+    EnableApp,
     InterfaceDriverWebsocket,
     InstallApp,
     RegisterDnaPayloadHash,
@@ -112,6 +113,31 @@ async def test_list_dnas():
         )
 
         assert len(await harness.admin_client.list_dnas()) == 1
+
+
+@pytest.mark.asyncio
+async def test_list_cell_ids():
+    async with TestHarness() as harness:
+        agent_pub_key = await harness.admin_client.generate_agent_pub_key()
+
+        await harness.admin_client.install_app(
+            InstallApp(
+                agent_key=agent_pub_key,
+                installed_app_id="test_app",
+                path=harness.fixture_path,
+            )
+        )
+
+        # Lists running only, so should be empty before enabling
+        cell_ids = await harness.admin_client.list_cell_ids()
+        assert len(cell_ids) == 0
+
+        await harness.admin_client.enable_app(EnableApp("test_app"))
+
+        cell_ids = await harness.admin_client.list_cell_ids()
+        assert len(cell_ids) == 1
+        assert cell_ids[0][0] == (await harness.admin_client.list_dnas())[0]
+        assert cell_ids[0][1] == agent_pub_key
 
 
 @pytest.mark.asyncio
