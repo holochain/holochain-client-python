@@ -1,6 +1,7 @@
 import pytest
 from holochain_client.api.admin.types import (
     AddAdminInterface,
+    DisableApp,
     DnaModifiers,
     EnableApp,
     InterfaceDriverWebsocket,
@@ -156,6 +157,33 @@ async def test_list_apps():
         apps = await harness.admin_client.list_apps()
         assert apps[0].agent_pub_key == agent_pub_key
         assert apps[0].installed_app_id == "test_app"
+
+
+@pytest.mark.asyncio
+async def test_enable_and_disable_app():
+    async with TestHarness() as harness:
+        agent_pub_key = await harness.admin_client.generate_agent_pub_key()
+
+        await harness.admin_client.install_app(
+            InstallApp(
+                agent_key=agent_pub_key,
+                installed_app_id="test_app",
+                path=harness.fixture_path,
+            )
+        )
+
+        app_info = (await harness.admin_client.list_apps())[0]
+        assert "disabled" in app_info.status
+
+        await harness.admin_client.enable_app(EnableApp("test_app"))
+
+        app_info = (await harness.admin_client.list_apps())[0]
+        assert "running" in app_info.status
+
+        await harness.admin_client.disable_app(DisableApp("test_app"))
+
+        app_info = (await harness.admin_client.list_apps())[0]
+        assert "disabled" in app_info.status
 
 
 @pytest.mark.asyncio

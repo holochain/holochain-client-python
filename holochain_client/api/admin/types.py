@@ -275,3 +275,8 @@ class ListDnas:
 @dataclass
 class ListCellIds:
     pass
+
+
+@dataclass
+class DisableApp:
+    installed_app_id: str

@@ -7,6 +7,7 @@ from holochain_client.api.admin.types import (
     AppInfo,
     AppInterfaceAttached,
     AttachAppInterface,
+    DisableApp,
     DumpNetworkStats,
     EnableApp,
     GenerateAgentPubKey,
@@ -117,6 +118,10 @@ class AdminClient:
         response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "app_enabled", f"response was: {response}"
         return AppEnabled(*response["data"])
+
+    async def disable_app(self, request: DisableApp):
+        response = await self._exchange(request, tag_from_type(request))
+        assert response["type"] == "app_disabled", f"response was: {response}"
 
     async def attach_app_interface(
         self, request: AttachAppInterface = AttachAppInterface()
