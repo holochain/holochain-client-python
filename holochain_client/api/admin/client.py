@@ -15,6 +15,7 @@ from holochain_client.api.admin.types import (
     ListAppInterfaces,
     ListApps,
     RegisterDnaPayload,
+    UninstallApp,
 )
 import json
 from holochain_client.api.common.pending_request_pool import PendingRequestPool
@@ -78,6 +79,12 @@ class AdminClient:
         response = await self._exchange(request, tag_from_type(request))
         assert response["type"] == "app_installed", f"response was: {response}"
         return AppInfo(**response["data"])
+
+    async def uninstall_app(self, request: UninstallApp):
+        response = await self._exchange(
+            request, tag=inspect.currentframe().f_code.co_name
+        )
+        assert response["type"] == "app_uninstalled", f"response was: {response}"
 
     async def generate_agent_pub_key(
         self, request: GenerateAgentPubKey = GenerateAgentPubKey()

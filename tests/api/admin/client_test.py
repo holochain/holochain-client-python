@@ -6,6 +6,7 @@ from holochain_client.api.admin.types import (
     InstallApp,
     RegisterDnaPayloadHash,
     RegisterDnaPayloadPath,
+    UninstallApp,
 )
 from holochain_client.api.admin.client import AdminClient
 from tests.harness import TestHarness
@@ -75,6 +76,26 @@ async def test_install_app():
         )
 
         assert response.installed_app_id == "test_app"
+
+
+@pytest.mark.asyncio
+async def test_uninstall_app():
+    async with TestHarness() as harness:
+        agent_pub_key = await harness.admin_client.generate_agent_pub_key()
+
+        await harness.admin_client.install_app(
+            InstallApp(
+                agent_key=agent_pub_key,
+                installed_app_id="test_app",
+                path=harness.fixture_path,
+            )
+        )
+
+        assert len(await harness.admin_client.list_apps()) == 1
+
+        await harness.admin_client.uninstall_app(UninstallApp("test_app"))
+
+        assert len(await harness.admin_client.list_apps()) == 0
 
 
 @pytest.mark.asyncio
