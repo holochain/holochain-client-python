@@ -265,3 +265,8 @@ RegisterDnaPayload = Union[RegisterDnaPayloadPath, RegisterDnaPayloadHash]
 @dataclass
 class UninstallApp:
     installed_app_id: str
+
+
+@dataclass
+class ListDnas:
+    pass

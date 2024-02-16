@@ -14,6 +14,7 @@ from holochain_client.api.admin.types import (
     InstallApp,
     ListAppInterfaces,
     ListApps,
+    ListDnas,
     RegisterDnaPayload,
     UninstallApp,
 )
@@ -85,6 +86,13 @@ class AdminClient:
             request, tag=inspect.currentframe().f_code.co_name
         )
         assert response["type"] == "app_uninstalled", f"response was: {response}"
+
+    async def list_dnas(self, request: ListDnas = ListDnas()) -> List[DnaHash]:
+        response = await self._exchange(
+            request, tag=inspect.currentframe().f_code.co_name
+        )
+        assert response["type"] == "dnas_listed", f"response was: {response}"
+        return response["data"]
 
     async def generate_agent_pub_key(
         self, request: GenerateAgentPubKey = GenerateAgentPubKey()

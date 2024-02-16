@@ -99,6 +99,22 @@ async def test_uninstall_app():
 
 
 @pytest.mark.asyncio
+async def test_list_dnas():
+    async with TestHarness() as harness:
+        agent_pub_key = await harness.admin_client.generate_agent_pub_key()
+
+        await harness.admin_client.install_app(
+            InstallApp(
+                agent_key=agent_pub_key,
+                installed_app_id="test_app",
+                path=harness.fixture_path,
+            )
+        )
+
+        assert len(await harness.admin_client.list_dnas()) == 1
+
+
+@pytest.mark.asyncio
 async def test_list_apps():
     async with TestHarness() as harness:
         agent_pub_key = await harness.admin_client.generate_agent_pub_key()
