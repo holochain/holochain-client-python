@@ -54,6 +54,7 @@ def _start_holochain() -> Tuple[Popen, int]:
     if ps.returncode != 0:
         raise Exception("Failed to clean sandbox")
 
+    print("harness: Creating sandbox")
     ps = run(
         ["hc", "sandbox", "--piped", "create", "--in-process-lair"],
         text=True,
@@ -62,18 +63,25 @@ def _start_holochain() -> Tuple[Popen, int]:
     if ps.returncode != 0:
         raise Exception("Failed to create sandbox")
 
+    print("harness: Starting sandbox")
     ps = Popen(["hc", "sandbox", "--piped", "run"], stdin=PIPE, stdout=PIPE, text=True)
     ps.stdin.write("passphrase\n")
     ps.stdin.flush()
 
+    print("harness: Waiting for sandbox to start")
     # TODO if the sandbox fails to start or print the expected magic line, this loop won't exit
     admin_port = 0
     while True:
         line = ps.stdout.readline()
+        if not line:
+            continue
+        print(line)
         match = re.search(r"#!0 (.*)", line)
         if match:
             info = json.loads(match.group(1))
             admin_port = info["admin_port"]
             break
+
+    print("harness: Sandbox started successfully")
 
     return (ps, admin_port)

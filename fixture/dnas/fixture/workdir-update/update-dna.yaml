@@ -1,0 +1,7 @@
+zomes:
+  - name: fixture
+    hash: ~
+    bundled: "../../../target/wasm32-unknown-unknown/release/fixture.wasm"
+    dependencies:
+      - name: fixture_integrity
+    dylib: ~
