@@ -1,6 +1,8 @@
+from typing import Tuple
+
 DnaHash = bytes
 AgentPubKey = bytes
-CellId = [DnaHash, AgentPubKey]
+CellId = Tuple[DnaHash, AgentPubKey]
 ZomeName = str
 FunctionName = str
 RoleName = str
