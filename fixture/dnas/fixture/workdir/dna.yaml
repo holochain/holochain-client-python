@@ -1,21 +1,15 @@
 ---
-manifest_version: "1"
+manifest_version: "0"
 name: fixture
 integrity:
   network_seed: ~
   properties: ~
-  origin_time: 1707241096195813
   zomes:
     - name: fixture_integrity
-      hash: ~
-      bundled: "../../../target/wasm32-unknown-unknown/release/fixture_integrity.wasm"
-      dependencies: ~
-      dylib: ~
+      path: "../../../target/wasm32-unknown-unknown/release/fixture_integrity.wasm"
 coordinator:
   zomes:
     - name: fixture
-      hash: ~
-      bundled: "../../../target/wasm32-unknown-unknown/release/fixture.wasm"
+      path: "../../../target/wasm32-unknown-unknown/release/fixture.wasm"
       dependencies:
         - name: fixture_integrity
-      dylib: ~

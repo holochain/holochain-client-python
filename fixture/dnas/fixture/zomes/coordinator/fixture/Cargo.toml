@@ -11,5 +11,6 @@ name = "fixture"
 hdk = { workspace = true }
 
 serde = { workspace = true }
+holochain_serialized_bytes = { workspace = true }
 
-fixture_integrity = { workspace = true } 
+fixture_integrity = { workspace = true }

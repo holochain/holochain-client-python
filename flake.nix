@@ -1,36 +1,29 @@
 {
-    description = "Flake for Holochain client development";
+    description = "Flake for Holochain client development (Holochain 0.6)";
 
     inputs = {
-        versions.url = "github:holochain/holochain?dir=versions/0_2";
+        holonix.url = "github:holochain/holonix?ref=main-0.6";
 
-        versions.inputs.holochain.url = "github:holochain/holochain/holochain-0.2.6";
-
-        holochain = {
-            url = "github:holochain/holochain";
-            inputs.versions.follows = "versions";
-        };
-
-        nixpkgs.follows = "holochain/nixpkgs";
+        nixpkgs.follows = "holonix/nixpkgs";
+        flake-parts.follows = "holonix/flake-parts";
     };
 
-    outputs = inputs @ { ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake { inherit inputs; }
+    outputs = inputs @ { flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; }
     {
-        systems = builtins.attrNames inputs.holochain.devShells;
-        perSystem = { config, pkgs, system, ... }: {
+        systems = builtins.attrNames inputs.holonix.devShells;
+        perSystem = { inputs', pkgs, system, ... }: {
             devShells.default = pkgs.mkShell {
-                inputsFrom = [
-                    inputs.holochain.devShells.${system}.holonix
-                ];
-                packages = [
-                    (pkgs.python3.withPackages (python-pkgs: [
-                        python-pkgs.pip
-                        python-pkgs.poetry-core
-                    ]))
-                    pkgs.poetry
-                    pkgs.nodejs_20
-                ];
+                packages = (with inputs'.holonix.packages; [
+                    holochain
+                    hc
+                    lair-keystore
+                    rust # Rust toolchain with the wasm32 target for building zomes
+                ]) ++ (with pkgs; [
+                    (python3.withPackages (ps: [ ps.pip ps.poetry-core ]))
+                    poetry
+                    nodejs_20
+                ]);
             };
         };
     };

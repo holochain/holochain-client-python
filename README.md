@@ -5,8 +5,36 @@
 
 # Holochain Client - Python
 
-> [!WARNING]
-> :radioactive: This package is under development, it is not a complete Holochain client and is not fully tested! :radioactive:
+A Python client for the [Holochain](https://holochain.org/) Conductor API, targeting **Holochain 0.6**.
+
+It speaks the admin and app websocket interfaces directly: msgpack framing, the
+`{type, value}` request/response envelope, fully-typed request/response models,
+and client-side zome-call signing (msgpack + SHA-512 + ed25519 via PyNaCl — no
+native dependency).
+
+> [!NOTE]
+> Unstable-feature endpoints (countersigning, DNA migration) are not yet covered.
+
+### Usage
+
+```python
+from holochain_client import AdminClient, AppClient, AppBundlePath
+
+admin = await AdminClient.connect("ws://localhost:4444")
+app_info = await admin.install_app(
+    AppBundlePath(path="my-app.happ"), installed_app_id="my-app"
+)
+await admin.enable_app("my-app")
+
+cell_id = app_info.cell_info["my-role"][0].cell_id
+port = await admin.attach_app_interface(allowed_origins="*")
+token = await admin.issue_app_authentication_token("my-app")
+
+app = await AppClient.connect(f"ws://localhost:{port}", token.token)
+app.credentials.set(cell_id, await admin.authorize_signing_credentials(cell_id))
+
+result = await app.call_zome(cell_id, "my_zome", "my_fn", {"some": "payload"})
+```
 
 ### Set up a development environment
 
@@ -53,14 +81,19 @@ poetry run pytest
 To select a single test suite, pass the path to `pytest`. For example:
 
 ```bash
-poetry run tests/api/app/client_test.py
+poetry run pytest tests/app/test_zome_call.py
 ```
 
-To run a single test, pass the path to the test suite and the use the `-k` flag. For example:
+To run a single test, pass the path to the test suite and then use the `-k` flag. For example:
 
 ```bash
-poetry run pytest tests/api/app/client_test.py -k test_call_zome
+poetry run pytest tests/app/test_zome_call.py -k test_echo
 ```
+
+The integration tests boot a real conductor with `hc sandbox`. To run them
+against an already-running conductor instead, set `HC_ADMIN_PORT` to its admin
+port. The unit tests (`tests/test_serde.py`, `tests/test_signing.py`) need no
+conductor.
 
 > [!TIP]
 > By default `pytest` captures output. Use the `-s` flag in combination with `RUST_LOG=info` to debug tests against Holochain.

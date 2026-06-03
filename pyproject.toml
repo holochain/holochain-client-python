@@ -15,20 +15,24 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 msgpack = "^1.0.7"
-websockets = "^12.0"
-holochain-serialization = "^0.1.0"
-cryptography = "^42.0.2"
-ruff = "^0.2.1"
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.0.0"
-
+websockets = "^13.0"
+pynacl = "^1.5.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest-asyncio = "^0.23.4"
+ruff = "^0.6.0"
+pytest = "^8.0.0"
+pytest-asyncio = "^0.24.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
