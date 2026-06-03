@@ -1,79 +1,121 @@
-from subprocess import Popen, run, PIPE
-import signal
-import re
+"""Test harness that boots a real Holochain conductor sandbox.
+
+Requires the ``hc`` and ``holochain`` binaries on ``PATH`` (provided by Holonix
+in CI). The fixture hApp must be built first (``cd fixture && npm run
+build:happ``).
+"""
+
+from __future__ import annotations
+
 import json
-from typing import Tuple
-from holochain_client.api.admin.client import AdminClient
+import os
+import re
+import signal
+import subprocess
 from pathlib import Path
-from os import path
+from typing import Optional, Tuple
 
-from holochain_client.api.app.client import AppClient
+from holochain_client.admin import AdminClient
+from holochain_client.app import AppClient
+from holochain_client.types.cell import CellId, ProvisionedCell
+
+FIXTURE_HAPP = (Path(__file__).parent / "../fixture/workdir/fixture.happ").resolve()
+PASSPHRASE = "test-phrase\n"
 
 
-class TestHarness:
-    admin_client: AdminClient
-    app_client: AppClient
-    fixture_path: str
+class Harness:
+    """A running conductor with the fixture app installed and connected."""
 
-    async def __aenter__(self):
-        (self._sandbox_process, admin_port) = _start_holochain()
-        self.admin_client = await AdminClient.create(f"ws://localhost:{admin_port}")
+    admin: AdminClient
+    app: AppClient
+    cell_id: CellId
+    installed_app_id: str
 
-        app_interface = await self.admin_client.attach_app_interface()
-        self.app_client = await AppClient.create(f"ws://localhost:{app_interface.port}")
+    def __init__(self):
+        self._process: Optional[subprocess.Popen] = None
 
-        fixture_path = (
-            Path(__file__).parent / "../fixture/workdir/fixture.happ"
-        ).resolve()
-        if not path.exists(fixture_path):
-            raise Exception(
-                "Fixture does not exist, please build it before running this test"
+    async def __aenter__(self) -> "Harness":
+        if not FIXTURE_HAPP.exists():
+            raise RuntimeError(
+                f"fixture hApp not found at {FIXTURE_HAPP}; build it with "
+                "`cd fixture && npm run build:happ`"
             )
-        self.fixture_path = str(fixture_path)
+        # ``HC_ADMIN_PORT`` lets the suite run against an already-running
+        # conductor instead of spawning one (useful where spawning is awkward).
+        existing_port = os.environ.get("HC_ADMIN_PORT")
+        if existing_port:
+            admin_port = int(existing_port)
+        else:
+            self._process, admin_port = _start_conductor()
 
-        fixture_dna_path = (
-            Path(__file__).parent / "../fixture/dnas/fixture/workdir/fixture.dna"
-        ).resolve()
-        if not path.exists(fixture_dna_path):
-            raise Exception(
-                "Fixture DNA does not exist, please build it before running this test"
-            )
-        self.fixture_dna_path = str(fixture_dna_path)
+        self.admin = await AdminClient.connect(f"ws://localhost:{admin_port}")
+        self.installed_app_id = "fixture"
+        try:
+            await self.admin.uninstall_app(self.installed_app_id, force=True)
+        except Exception:
+            pass
+        app_info = await self.admin.install_app(
+            _bundle_source(),
+            installed_app_id=self.installed_app_id,
+        )
+        await self.admin.enable_app(self.installed_app_id)
 
+        provisioned = app_info.cell_info["fixture"][0]
+        assert isinstance(provisioned, ProvisionedCell)
+        self.cell_id = provisioned.cell_id
+
+        app_port = await self.admin.attach_app_interface(allowed_origins="*")
+        token = await self.admin.issue_app_authentication_token(self.installed_app_id)
+        self.app = await AppClient.connect(f"ws://localhost:{app_port}", token.token)
+
+        credentials = await self.admin.authorize_signing_credentials(self.cell_id)
+        self.app.credentials.set(self.cell_id, credentials)
         return self
 
-    async def __aexit__(self, exc_type, exc, tb):
-        del exc_type, exc, tb
-        await self.app_client.close()
-        await self.admin_client.close()
-        self._sandbox_process.send_signal(signal.SIGINT)
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        try:
+            await self.app.close()
+            await self.admin.close()
+        finally:
+            if self._process is not None:
+                self._process.send_signal(signal.SIGINT)
+                try:
+                    self._process.wait(timeout=15)
+                except subprocess.TimeoutExpired:
+                    self._process.kill()
 
 
-def _start_holochain() -> Tuple[Popen, int]:
-    ps = run(["hc", "sandbox", "clean"])
-    if ps.returncode != 0:
-        raise Exception("Failed to clean sandbox")
+def _bundle_source():
+    from holochain_client.admin.types import AppBundleBytes
 
-    ps = run(
+    return AppBundleBytes(bundle=FIXTURE_HAPP.read_bytes())
+
+
+def _start_conductor() -> Tuple[subprocess.Popen, int]:
+    subprocess.run(["hc", "sandbox", "clean"], check=False)
+    created = subprocess.run(
         ["hc", "sandbox", "--piped", "create", "--in-process-lair"],
+        input=PASSPHRASE,
         text=True,
-        input="passphrase\n",
     )
-    if ps.returncode != 0:
-        raise Exception("Failed to create sandbox")
+    if created.returncode != 0:
+        raise RuntimeError("failed to create sandbox")
 
-    ps = Popen(["hc", "sandbox", "--piped", "run"], stdin=PIPE, stdout=PIPE, text=True)
-    ps.stdin.write("passphrase\n")
-    ps.stdin.flush()
+    process = subprocess.Popen(
+        ["hc", "sandbox", "--piped", "run"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    assert process.stdin is not None and process.stdout is not None
+    process.stdin.write(PASSPHRASE)
+    process.stdin.flush()
 
-    # TODO if the sandbox fails to start or print the expected magic line, this loop won't exit
-    admin_port = 0
     while True:
-        line = ps.stdout.readline()
+        line = process.stdout.readline()
+        if line == "":
+            raise RuntimeError("conductor exited before reporting its admin port")
         match = re.search(r"#!0 (.*)", line)
         if match:
-            info = json.loads(match.group(1))
-            admin_port = info["admin_port"]
-            break
-
-    return (ps, admin_port)
+            return process, json.loads(match.group(1))["admin_port"]
