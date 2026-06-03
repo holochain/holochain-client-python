@@ -13,7 +13,8 @@ import itertools
 from typing import Any, Callable, Optional
 
 import msgpack
-import websockets
+from websockets.asyncio.client import connect as ws_connect
+from websockets.exceptions import ConnectionClosed
 
 # Conductor websockets reject connections without an Origin header. The value is
 # only meaningful when the interface restricts allowed origins.
@@ -53,7 +54,7 @@ class WebsocketConnection:
     async def connect(
         cls, url: str, origin: str = DEFAULT_ORIGIN
     ) -> "WebsocketConnection":
-        ws = await websockets.connect(url, additional_headers={"Origin": origin})
+        ws = await ws_connect(url, additional_headers={"Origin": origin})
         self = cls(ws, origin)
         self._reader = asyncio.create_task(self._read_loop())
         return self
@@ -83,7 +84,7 @@ class WebsocketConnection:
         try:
             async for raw in self._ws:
                 self._dispatch(raw)
-        except websockets.ConnectionClosed:
+        except ConnectionClosed:
             pass
         finally:
             closed = WebsocketClosed("connection closed")
